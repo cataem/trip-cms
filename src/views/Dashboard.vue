@@ -29,9 +29,9 @@
 				<!--<router-link tag="div" class="sidenav-item dashboard-icon" :to="{ path: '/pages', name: 'pages'}">-->
 					<!--<font-awesome-icon :icon="['fab', 'vuejs']" />-->
 				<!--</router-link>-->
-        <a :href="'https://developers.dcsplus.net/users/' + this.$store._vm.USER">
-          <div class="sidenav-item dashboard-icon"></div>
-        </a>
+				<a :href="'https://developers.dcsplus.net/users/' + this.$store._vm.USER">
+					<div class="sidenav-item dashboard-icon"></div>
+				</a>
 				<router-link tag="div" class="sidenav-item" :to="{ path: '/pages', name: 'pages'}">
 					<font-awesome-icon :icon="['far', 'file-alt']"></font-awesome-icon>
 					<p>Pages</p>
@@ -40,12 +40,12 @@
 					<font-awesome-icon :icon="['far', 'file-code']"></font-awesome-icon>
 					<p>Snippets</p>
 				</router-link>
-        <a :href="'https://developers.dcsplus.net/users/' + this.$store._vm.USER + '/' + this.$store._vm.PROJECT + '/published/uploads'" target="_blank" class="external-item">
-          <div class="sidenav-item">
-            <font-awesome-icon :icon="['fas','file-upload']"></font-awesome-icon>
-            <p>Uploads</p>
-          </div>
-        </a>
+				<a :href="'https://developers.dcsplus.net/users/' + this.$store._vm.USER + '/' + this.$store._vm.PROJECT + '/published/uploads'" target="_blank" class="external-item">
+					<div class="sidenav-item">
+						<font-awesome-icon :icon="['fas','file-upload']"></font-awesome-icon>
+						<p>Uploads</p>
+					</div>
+				</a>
 				<!-- <router-link tag="div" class="sidenav-item" :to="{ path: '/email-templates', name: 'email-templates'}">
 					<font-awesome-icon :icon="['fas', 'envelope-open-text']"></font-awesome-icon>
 					<p>Email templates</p>
@@ -66,7 +66,7 @@
 				</div>
 				<transition name="fade" mode="out-in">
 					<div v-if="active" @click.self="closemodal($event)" class="full-screen-wrapper">
-						<drop-down-modal :width="329" :reference="$refs">
+						<drop-down-modal :width="329" :reference="$refs" :active="editorMode">
 						</drop-down-modal>
 					</div>
 				</transition>
@@ -91,7 +91,8 @@
 	</div>
 </template>
 <script>
-import { throttle, debounce } from "throttle-debounce"
+// import { throttle, debounce } from 'throttle-debounce'
+import { throttle } from 'throttle-debounce'
 import DropDownModal from '../components/DropDownModal'
 export default {
 	components: {
@@ -104,22 +105,22 @@ export default {
 		}
 	},
 	methods: {
-		logout() {
-			this.$store.dispatch('logout');
+		logout () {
+			this.$store.dispatch('logout')
 		},
-		addToast() {
-			this.$store.commit('Toast/_add', Math.random());
+		addToast () {
+			this.$store.commit('Toast/_add', Math.random())
 		},
-		holdThis(toast) {
+		holdThis (toast) {
 			if (toast.intervalID) {
-				window.clearInterval(toast.intervalID);
-				toast.intervalID = null;
+				window.clearInterval(toast.intervalID)
+				toast.intervalID = null
 			} else {
-				this.removeThis(toast);
+				this.removeThis(toast)
 			}
 		},
-		removeThis(toast) {
-			this.$store.commit('Toast/_remove', toast);
+		removeThis (toast) {
+			this.$store.commit('Toast/_remove', toast)
 		},
 		togglesettings () {
 			this.active = !this.active
@@ -128,20 +129,23 @@ export default {
 			e.stopPropagation()
 			this.active = false
 		},
-		watchEvents: throttle(30000, function() {
+		watchEvents: throttle(30000, function () {
 			// reset keepAlive timer if activity was detected in 30 seconds
-			this.$store.dispatch("resetKeepAliveClientSideTimer");
-		}),
+			this.$store.dispatch('resetKeepAliveClientSideTimer')
+		})
 	},
-	mounted() {
+	mounted () {
 
 	},
 	computed: {
-		toasts() {
-			return this.$store.getters['Toast/_toasts'];
+		toasts () {
+			return this.$store.getters['Toast/_toasts']
 		},
-		isLogedIn() {
-			return this.$store.getters.isLoggedIn;
+		isLogedIn () {
+			return this.$store.getters.isLoggedIn
+		},
+		editorMode () {
+			return this.$store.getters.getMode
 		}
 	},
 	created () {
@@ -206,8 +210,8 @@ export default {
 		}*/
     height:41px;
 		margin-top: 5px;
-	    margin-left: 5px;
-	    padding: 0 27px;
+		margin-left: 5px;
+		padding: 0 27px;
 		background-image: url("https://developers.dcsplus.net/images/logo-xs.png");
 		background-repeat: no-repeat;
 	}
@@ -324,8 +328,7 @@ table {
 .component-container {
 	height: 100%;
 }
-.list {
-}
+// .list {}
 .list-item-id {
 	text-align: center;
 	width: 50px;
@@ -372,10 +375,10 @@ table {
 	border-right:#2D333B solid 1px;
 }
 .meta-title {
-	    height: 21px;
-		line-height: 21px;
-		font-weight: 400;
-		font-size: 14px;
+	height: 21px;
+	line-height: 21px;
+	font-weight: 400;
+	font-size: 14px;
 }
 .input-holder {
 	margin-bottom: 14px;
@@ -597,12 +600,10 @@ table {
 	display: flex;
 	flex-direction: row;
 
-	& select {
-
-		& option {
-
-		}
-	}
+	// & select {
+	// 	& option {
+	// 	}
+	// }
 	& button {
 		margin: 0 0 0 5px;
 		height: 33px;
@@ -675,9 +676,8 @@ table {
 }
 .compile {
 	position: relative;
-	& p {
-
-	}
+	// & p {
+	// }
 }
 .modal_wrapper {
 	position: fixed;

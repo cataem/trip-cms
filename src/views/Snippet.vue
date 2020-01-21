@@ -13,7 +13,6 @@
 			<div class="panel-container">
 				<div class="meta-header">
 					<form @submit.prevent="compileSnippet">
-						
 						<button type="submit" class="submit-styled">
 							<font-awesome-icon :icon="['fas', 'rocket']"></font-awesome-icon><p>Compile snippet</p>
 						</button>
@@ -63,12 +62,11 @@
 								<span id="staticSnippet" class="toggle-icon" :class="snippet.Static == 1 ? 'checked': ''" @click="toggleStaticSnippet"></span>
 								<label class="label-text" for="staticSnippet" @click="toggleStaticSnippet">Static snippet</label>
 							</div>
-						</div>	
+						</div>
 						<div class="input-holder">
 							<label>Prescript</label>
 							<input type="text" v-model="snippet.PreScript">
 						</div>
-						
 					</form>
 				</div>
 				<div class="main-panel" ref="mainpanel" @mousemove="watchhandle($event)" @mouseup="stophandle()" @mouseleave="stophandle()">
@@ -88,6 +86,7 @@
 							:sec_height="sec_height"
 							@onTopChangeListener="onChangeHTMLSnippet"
 							@onBotChangeListener="onChangeCSSSnippet"
+							@save="ctrlSave($event, snippet)"
 							:topval="snippet.Template"
 							:botval="snippet.Css"
 							:toptitle="'(template)'"
@@ -102,6 +101,7 @@
 							:sec_width="right_sec_width"
 							:sec_height="sec_height"
 							@onTopChangeListener="onChangeJavascript"
+							@save="ctrlSave($event, snippet)"
 							:topval="postScriptContent"
 							:botval="dataResponse"
 							:toptitle="snippet.Static == 1 ? '(document.ready)': '(render.post)'"
@@ -124,6 +124,7 @@
 									:value="snippet.Template"
 									:lang="'html'"
 									@onChangeListener="onChangeHTMLSnippet"
+									@save="ctrlSave($event, snippet)"
 									:insertString="insertString">
 									</Section>
 								</div>
@@ -134,7 +135,8 @@
 									:sec_height="full_height - 47"
 									:value="postScriptContent"
 									:lang="'javascript'"
-									@onChangeListener="onChangeJavascript">
+									@onChangeListener="onChangeJavascript"
+									@save="ctrlSave($event, snippet)">
 									</Section>
 								</div>
 								<div class="section-full " v-else-if="activeTab == 2">
@@ -144,6 +146,7 @@
 									:sec_height="full_height - 47"
 									:value="snippet.Css"
 									@onChangeListener="onChangeCSSSnippet"
+									@save="ctrlSave($event, snippet)"
 									:lang="'css'">
 									</Section>
 								</div>
@@ -154,6 +157,7 @@
 									:sec_height="full_height - 47"
 									:value="dataResponse"
 									@onChangeListener="onChangeJson"
+									@save="ctrlSave($event, snippet)"
 									:lang="'json'">
 									</Section>
 								</div>
@@ -220,7 +224,7 @@ export default {
 	},
 	data () {
 		return {
-			//modal
+			// modal
 			postopmodal: 0,
 			posleftmodal: 0,
 			bgImage: '',
@@ -237,8 +241,8 @@ export default {
 			querydatasrouceparams: [],
 			datatype: '',
 			datatypes: [
-				{Id: 0, Name: 'Choose from endpoint builder module'},
-				{Id: 1, Name: 'Add an external data source type'}
+				{ Id: 0, Name: 'Choose from endpoint builder module' },
+				{ Id: 1, Name: 'Add an external data source type' }
 			],
 			// old
 			// isStaticSnippet: false,
@@ -271,43 +275,43 @@ export default {
 		}
 	},
 	methods: {
-		clearDataUrl() {
-			this.snippet.DataUrl = '';
-			this.externalApi = '';
+		clearDataUrl () {
+			this.snippet.DataUrl = ''
+			this.externalApi = ''
 		},
-		customApi() {
-			this.$store.dispatch('callExternalApi', this.externalApi);
+		customApi () {
+			this.$store.dispatch('callExternalApi', this.externalApi)
 			this.snippet.DataUrl = this.externalApi
 		},
-		generatedatasource() {
+		generatedatasource () {
 			// this.querydatasrouceparams;
-			this.$store.dispatch('queryDataSourceParams', [this.selectedData ,this.querydatasrouceparams]);
+			this.$store.dispatch('queryDataSourceParams', [this.selectedData, this.querydatasrouceparams])
 		},
-		toggleStaticSnippet() {
-			/*this.isStaticSnippet = !this.isStaticSnippet;
+		toggleStaticSnippet () {
+			/* this.isStaticSnippet = !this.isStaticSnippet;
 			if (this.isStaticSnippet) {
 				this.snippet.Static = '1';
 			} else {
 				this.snippet.Static = '0';
-			}*/
+			} */
 			if (this.snippet.Static == '1') {
-				this.snippet.Static = '0';
+				this.snippet.Static = '0'
 			} else {
-				this.snippet.Static = '1';
+				this.snippet.Static = '1'
 			}
 		},
-		datatypeselect(e) {
+		datatypeselect (e) {
 			if (e.target.value) {
-				this.wichDataType = e.target.value;
-				this.isActiveDataModal = true;
+				this.wichDataType = e.target.value
+				this.isActiveDataModal = true
 			}
 		},
-		closemodal() {
-			this.datatype = '';
-			this.isActiveDataModal = false;
+		closemodal () {
+			this.datatype = ''
+			this.isActiveDataModal = false
 		},
 		requestData (val) {
-			this.$store.dispatch('requestData', val.Id);
+			this.$store.dispatch('requestData', val.Id)
 		},
 		insertSnippet (val) {
 			return this.insertString = val.Placeholder
@@ -317,18 +321,22 @@ export default {
 		},
 		onChangeHTMLSnippet (val) {
 			// this.snippet.Template = val
-			this.$store.dispatch('updateSnippetTemplate', val);
+			this.$store.dispatch('updateSnippetTemplate', val)
 		},
 		onChangeCSSSnippet (val) {
 			// this.snippet.Template = val
-			this.$store.dispatch('updateSnippetCSS', val);
+			this.$store.dispatch('updateSnippetCSS', val)
 		},
-		onChangeJavascript(val) {
+		onChangeJavascript (val) {
 			// this.postScriptContent = val
-			this.$store.dispatch('updatePostScript', val);
+			this.$store.dispatch('updatePostScript', val)
 		},
 		onChangeJson (val) {
 
+		},
+		ctrlSave (args, snippet) {
+			// console.log(args, snippet)
+			this.compileSnippet()
 		},
 		// hndFileSelect (path) {
 		// 	this.depend = this.$PROJECT_BASE_URL + '/published/' + path
@@ -367,7 +375,7 @@ export default {
 			let cursposPos = e.clientX - 239
 			this.left_sec_width = Math.ceil(Math.max(140, (cursposPos - 1)))
 			this.right_sec_width = (((window.innerWidth - 1) - 239) - this.left_sec_width)
-			this.left_sec_width;
+			// this.left_sec_width;
 		},
 		watchhandle (e) {
 			if (this.mousemove === false) {
@@ -392,7 +400,6 @@ export default {
 
 		this.postopmodal = this.$refs.datatypesSelect.offsetTop - 14
 		this.posleftmodal = (this.$refs.datatypesSelect.offsetLeft + this.$refs.datatypesSelect.offsetWidth) + 15;
-
 	},
 	computed: {
 		showFileModal () {
@@ -413,13 +420,13 @@ export default {
 		widgets () {
 			return this.$store.getters.getWidgets
 		},
-		dataResponse() {
+		dataResponse () {
 			return this.$store.getters.getDataResponse
 		},
-		datasourceparams() {
+		datasourceparams () {
 			return this.$store.getters.getDataSourceParams
 		},
-		postScriptContent() {
+		postScriptContent () {
 			return this.$store.getters.getPostScriptContent
 		}
 	},
