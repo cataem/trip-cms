@@ -5,11 +5,14 @@
 			<router-link tag="button" class="btn btn-green" :to="{ name: 'new', params: {type: 'page'}}">
 				New Page
 			</router-link>
-			<form @submit.prevent="search(filterQuery)">
+			<form>
 				<input type="text" class="search-input" v-model="filterQuery" placeholder="Search Page Name">
-				<input type="submit" hidden>
 			</form>
-
+			<div style="display:flex;flex-grow:1;flex-direction: row-reverse;">
+				<button type="button" @click.prevent="scanAllPages" class="btn btn-green" title="Scan all pages for translation keys" style="margin:0 15px;">
+					<font-awesome-icon :icon="['fas', 'binoculars']"></font-awesome-icon> Scan All Pages
+				</button>
+			</div>
 		</div>
 		<div class="content" ref="content" style="height:calc(100% - 42px)">
 			<table class="list" cellpadding="0" cellspacing="0" width="100%">
@@ -48,12 +51,23 @@
 						</div>
 					</td>
 					<td class="list-item-action">
-						<router-link tag="button" class="btn btn-icon" :to="{name: 'page', params: { id: item.Id }}">
+						<router-link tag="button" class="btn btn-icon" :to="{name: 'page', params: { id: item.Id }}" title="edit">
 							<font-awesome-icon :icon="['far', 'edit']"></font-awesome-icon>
 						</router-link>
+						<router-link tag="button" class="btn btn-icon" :to="{name: 'page-translation', params: { id: item.Id }}" title="edit translations">
+							<font-awesome-icon :icon="['fas', 'sign-language']" style="font-size:105%"></font-awesome-icon>
+						</router-link>
+						<!-- <button class="btn btn-icon" @click.prevent="scanPage(item)" title="scan page for translation keys">
+							<font-awesome-icon :icon="['fas', 'binoculars']"></font-awesome-icon>
+						</button> -->
 						<button class="btn btn-icon" @click.prevent="askModalDeletePage(item)">
 							<font-awesome-icon :icon="['far', 'trash-alt']"></font-awesome-icon>
 						</button>
+					</td>
+				</tr>
+				<tr v-if="!pages.length">
+					<td colspan="4" class="" align="center" style="border-top:1px solid #333;padding-top:3em;padding-bottom:3em;">
+						<p><strong><span>No pages</span> <span v-if="filterQuery"> for current filter "{{filterQuery}}"</span></strong></p>
 					</td>
 				</tr>
 			</table>
@@ -87,15 +101,14 @@ export default {
 		}
 	},
 	mounted () {
-		this.$refs.content.offsetWidth
+		// this.$refs.content.offsetWidth
 	},
 	methods: {
-		search(val) {
-			if (val.length > 0) {
-				this.$store.dispatch('searchPages', val)
-			} else {
-				this.$store.dispatch('fetchPages')
-			}
+		scanAllPages () {
+			this.$store.dispatch('scanAllPages')
+		},
+		scanPage (page) {
+			this.$store.dispatch('scanPage', page.Name)
 		},
 		modalResponse (val) {
 			if (val.resp === true) {
@@ -141,19 +154,25 @@ export default {
 			}
 			let payload = {
 				Id: val.Id,
-				Status: newstatus,
+				Status: newstatus
 			}
 			this.$store.dispatch('togglePageStatus', payload)
-			val.Status = newstatus;
+			val.Status = newstatus
 		}
 	},
 	computed: {
 		pages () {
-			return this.$store.getters.getPages
+			const pages = this.$store.getters.getPages
+			if (this.filterQuery) {
+				return pages.filter((p) => {
+					return p.Name.toLowerCase().includes(this.filterQuery.toLowerCase())
+				})
+			}
+			return pages
 		}
 
 	},
-	created() {
+	created () {
 		this.$store.dispatch('fetchPages')
 	}
 }

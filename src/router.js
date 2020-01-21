@@ -8,6 +8,7 @@ import Snippet from './views/Snippet.vue'
 import Email from './views/Email.vue'
 import ListPages from './views/ListPages.vue'
 import ListSnippets from './views/ListSnippets.vue'
+import PageTranslation from './views/TranslationPage.vue'
 import ListEmails from './views/ListEmails.vue'
 import New from './views/New.vue'
 
@@ -38,6 +39,11 @@ const router = new Router({
 					component: ListSnippets
 				},
 				{
+					path: 'page-translation/:id',
+					name: 'page-translation',
+					component: PageTranslation
+				},
+				{
 					path: 'page/:id',
 					name: 'page',
 					component: Page
@@ -50,12 +56,12 @@ const router = new Router({
 				{
 					path: 'email-templates',
 					name: 'email-templates',
-					component: ListEmails //ListEmailTemplates
+					component: ListEmails // ListEmailTemplates
 				},
 				{
 					path: 'email-template/:id',
 					name: 'email-template',
-					component: Email //EmailTemplate
+					component: Email // EmailTemplate
 				},
 				{
 					path: 'new/:type',
