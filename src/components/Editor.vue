@@ -8,7 +8,7 @@ export default {
 	props: {
 		value: {
 			type: String,
-			default: '',
+			default: ''
 		},
 		lang: {
 			type: String,
@@ -64,6 +64,11 @@ export default {
 		},
 		'onInsert': function (val, oldVal) {
 			this.onInsertListener(val)
+		},
+		'lang': function (n, o) {
+			if (n !== 0) {
+				this.editor.getSession().setMode('ace/mode/' + n)
+			}
 		}
 	},
 	methods: {
@@ -76,9 +81,9 @@ export default {
 	},
 	mounted () {
 		// console.log(this.height)
-		let editor;
+		let editor
 
-		/*if(this.lang === 'twig' || this.lang === 'html'){
+		/* if(this.lang === 'twig' || this.lang === 'html'){
 			window.emmet = require('emmet')
 			require('brace/ext/emmet')
 		}  */
@@ -94,13 +99,13 @@ export default {
 
 		ace.acequire('ace/ext/beautify')
 		ace.acequire('ace/ext/searchbox')
-		/*var themelist = ace.acequire('ace/ext/themelist')
-		console.log(themelist)*/
+		/* var themelist = ace.acequire('ace/ext/themelist')
+		console.log(themelist) */
 		ace.acequire('ace/ext/language_tools')
 
 		this.editor = editor = ace.edit(this.$el)
 
-		//settings menu
+		// settings menu
 		ace.acequire('ace/ext/settings_menu').init(editor)
 
 		// editor.$blockScrolling = Infinity
@@ -112,11 +117,11 @@ export default {
 			// enable autocompletion and snippets
 			enableBasicAutocompletion: true,
 			enableSnippets: true,
-			//fontSize: 14,
+			// fontSize: 14,
 			enableLiveAutocompletion: false,
-			//,enableEmmet: true
+			// ,enableEmmet: true
 			showGutter: true,
-			wrap: 'free',
+			wrap: 'free'
 		}
 		if (window.localStorage) {
 			var userPreferences = window.localStorage.getItem('aceConfig')
@@ -124,8 +129,7 @@ export default {
 				try {
 					userPreferences = JSON.parse(userPreferences)
 					Object.assign(defaultOptions, userPreferences)
-				}
-				catch(err) {
+				} catch (err) {
 					console.error('malformed editor configuration in local storage')
 					window.localStorage.removeItem('aceConfig')
 				}
@@ -134,25 +138,25 @@ export default {
 
 		editor.setOptions(defaultOptions)
 		editor.commands.addCommands([{
-			name: "showSettingsMenu",
-			bindKey: {win: "Ctrl-q", mac: "Ctrl-q"},
-			exec: function(editor) {
-				editor.showSettingsMenu();
+			name: 'showSettingsMenu',
+			bindKey: { win: 'Ctrl-q', mac: 'Ctrl-q' },
+			exec: function (editor) {
+				editor.showSettingsMenu()
 			},
 			readOnly: true
-		}]);
-		/*editor.commands.addCommand({
+		}])
+		/* editor.commands.addCommand({
 			name: 'save',
 			bindKey: {win: "Ctrl-S", "mac": "Cmd-S"},
 			exec: function(editor) {
 				console.log("saving", editor.session.getValue())
 			}
-		});*/
+		}) */
 
-		editor.session.on('change', this.onChangeListener);
+		editor.session.on('change', this.onChangeListener)
 		// this.$refs.editor.style.fontSize = this.fontsize + 'px'
-		editor.resize();
-	},
+		editor.resize()
+	}
 }
 </script>
 <style lang="scss">

@@ -8,15 +8,17 @@ import axios from 'axios'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faVuejs } from '@fortawesome/free-brands-svg-icons'
-import { faToggleOn, faToggleOff, faAngleLeft, faAngleRight, faTimes, faSort,
-	faSortDown, faSortUp, faSlidersH, faRocket, faSignOutAlt, faFileUpload, faBook, faEnvelopeOpenText, faEye } from '@fortawesome/free-solid-svg-icons'
-import { faUserCircle, faFileAlt, faFileCode, faEdit, faTrashAlt, faPlayCircle, faSave
+import {
+	faToggleOn, faToggleOff, faAngleLeft, faAngleRight, faAngleDoubleDown, faTimes, faSort,
+	faSortDown, faSortUp, faSlidersH, faRocket, faSignOutAlt, faFileUpload, faSignLanguage, faBook, faEnvelopeOpenText, faEye, faBinoculars
+} from '@fortawesome/free-solid-svg-icons'
+import {
+	faUserCircle, faFileAlt, faFileCode, faEdit, faTrashAlt, faPlayCircle, faSave
 } from '@fortawesome/free-regular-svg-icons'
 library.add(faUserCircle, faFileAlt, faFileCode, faVuejs, faEdit, faTrashAlt, faToggleOn, faToggleOff, faAngleLeft,
-	faAngleRight, faTimes, faSort, faSortDown, faSortUp, faPlayCircle, faSave, faSlidersH, faRocket, faSignOutAlt,
-	faFileUpload, faBook, faEnvelopeOpenText, faEye)
+	faAngleRight, faAngleDoubleDown, faTimes, faSort, faSortDown, faSortUp, faPlayCircle, faSave, faSlidersH, faRocket, faSignOutAlt,
+	faFileUpload, faSignLanguage, faBook, faEnvelopeOpenText, faEye, faBinoculars)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
-
 
 // axios.defaults.prefix = '' // prevent axios to prepend '/' to baseUrl
 axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded'

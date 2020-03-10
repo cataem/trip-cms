@@ -1,5 +1,7 @@
+const STORAGE_KEY = 'edset'
+const editorSettings = localStorage.getItem(STORAGE_KEY)
 const state = {
-	mode: 'split',
+	mode: editorSettings ? JSON.parse(editorSettings).mode : 'split',
 	// mode: 'tabs',
 	settings: {
 		wrap: false,
@@ -19,6 +21,7 @@ const mutations = {
 const actions = {
 	updateMode ({ commit }, payload) {
 		commit('UPDATE_MODE', payload)
+		localStorage.setItem(STORAGE_KEY, JSON.stringify({ mode: payload }))
 	},
 	updateSettings ({ commit }, payload) {
 		commit('UPDATE_SETTINGS', payload)

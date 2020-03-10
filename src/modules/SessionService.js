@@ -36,7 +36,7 @@ const mutations = {
 }
 
 const actions = {
-	async callApi ({ commit, dispatch, getters, state }, { method, url, data, ingoreBaseUrl }) { // main method for CRUD operations
+	async callApi ({ commit, dispatch, getters, state }, { headers, method, url, data, ingoreBaseUrl }) { // main method for CRUD operations
 		if (state.isLoginRequired && (getters.hasAuthToken && getters.isLoggedIn)) {
 			data = data || {}
 
@@ -55,13 +55,105 @@ const actions = {
 						endpoint: url
 					},
 					data,
-          method: method,
+					method: method,
 					ingoreBaseUrl
 				}
 				await dispatch('getHash', objectForHashCall) // get authentication hash
 				url = await dispatch('constructUrl', { url, queryParams: state.queryParams }) // construct full url for actual call
 
-        return dispatch(method, { url, data, ingoreBaseUrl }).then(response => { // make the actual call
+				return dispatch(method, { url, data, ingoreBaseUrl }).then(response => { // make the actual call
+					if (response.data.Status === 511) { // token expired
+						expiredTokenHandler(method, url, data) // handle expired token error
+					} else {
+						commit('INCREMENT_REQUESTS_COUNTER') // increment requests counter after each request
+					}
+					return response
+				}).catch(error => {
+					console.log('Request error: ', error)
+					return Promise.reject(error)
+					// return error
+				})
+			} else {
+				expiredTokenHandler(method, url, data)
+			}
+		}
+	},
+	async cleanApi ({ state, commit, dispatch }, { method, url, data, ingoreBaseUrl }) {
+		// const expiredTokenHandler = (method, url, data) => { // expired token handler
+		// 	return dispatch('refreshToken').then(() => // refresh token
+		// 		dispatch('callApi', { method, url, data }) // make the call again after refreshing new token
+		// 	)
+		// }
+
+		// headers: {
+		// 	'Content-Type': 'application/json'
+		// },
+		// withCredentials: true
+
+		let auth = null
+		let hash = null
+		if (this._vm.$http.defaults.headers.hasOwnProperty('Authorization')) {
+			auth = this._vm.$http.defaults.headers['Authorization']
+			delete this._vm.$http.defaults.headers['Authorization']
+		}
+		if (this._vm.$http.defaults.headers.hasOwnProperty('x-hash')) {
+			auth = this._vm.$http.defaults.headers['x-hash']
+			delete this._vm.$http.defaults.headers['x-hash']
+		}
+		return dispatch(method, { url, data, ingoreBaseUrl }).then(response => { // make the actual call
+			// if (response.data.Status === 511) { // token expired
+			// 	expiredTokenHandler(method, url, data) // handle expired token error
+			// } else {
+			// 	commit('INCREMENT_REQUESTS_COUNTER') // increment requests counter after each request
+			// }
+			if (auth) {
+				this._vm.$http.defaults.headers['Authorization'] = auth
+			}
+			if (hash) {
+				this._vm.$http.defaults.headers['x-hash'] = hash
+			}
+			return response
+		}).catch(error => {
+			console.log('Request error: ', error)
+			return Promise.reject(error)
+			// return error
+		})
+	},
+	async translateApi ({ commit, dispatch, getters, state }, { headers, method, url, data, ingoreBaseUrl }) { // main method for CRUD operations
+		// no UserId, Token, Workspace, Project in payload (Authorization header is enough)
+		if (state.isLoginRequired && (getters.hasAuthToken && getters.isLoggedIn)) {
+			data = data || {}
+
+			const expiredTokenHandler = (method, url, data) => { // expired token handler
+				return dispatch('refreshToken').then(() => // refresh token
+					dispatch('callApi', { method, url, data }) // make the call again after refreshing new token
+				)
+			}
+			if (url.includes('/external/')) {
+				delete this._vm.$http.defaults.headers['content-type']
+				Object.assign(this._vm.$http.defaults.headers, headers)
+			} else {
+				delete this._vm.$http.defaults.headers['content-type']
+				Object.assign(this._vm.$http.defaults.headers, { 'content-type': 'application/x-www-form-urlencoded' })
+			}
+			if (getters.tokenHasLifes) {
+				// data.UserId = getters.getCookie('userId')
+				// data.Token = getters.getCookie('token')
+				// data.Workspace = this._vm.USER
+				// data.Project = this._vm.PROJECT
+				// debugger
+				const objectForHashCall = {
+					params: {
+						endpoint: url
+					},
+					data,
+					method: method,
+					ingoreBaseUrl
+				}
+				await dispatch('getHash', objectForHashCall) // get authentication hash
+				url = await dispatch('constructUrl', { url, queryParams: state.queryParams }) // construct full url for actual call
+
+				return dispatch(method, { url, data, ingoreBaseUrl }).then(response => { // make the actual call
 					if (response.data.Status === 511) { // token expired
 						expiredTokenHandler(method, url, data) // handle expired token error
 					} else {
@@ -87,10 +179,10 @@ const actions = {
 		return url
 	},
 	getHash ({ commit, dispatch, getters }, requestData) { // get authentication hash from server (renewed for every call)
-    let method = 'POST'
-    if (requestData.method) {
-      method = requestData.method
-    }
+		let method = 'POST'
+		if (requestData.method) {
+			method = requestData.method
+		}
 		let params = ''
 		if (!requestData.ingoreBaseUrl) {
 			requestData.params.endpoint = this._vm.BASE_URL + requestData.params.endpoint

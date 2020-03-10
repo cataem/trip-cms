@@ -7,6 +7,7 @@ import GetSnippets from './modules/GetSnippets'
 import GetEmails from './modules/GetEmails'
 // import Page from './modules/Page'
 import Snippet from './modules/Snippet'
+import Translations from './modules/Translations'
 import EditorSettings from './modules/EditorSettings'
 import FileBrowser from './modules/FileBrowser'
 import Toast from './modules/Toast'
@@ -46,6 +47,7 @@ export default new Vuex.Store({
 		GetEmails,
 		// Page,
 		Snippet,
+		Translations,
 		EditorSettings,
 		FileBrowser,
 		Toast,

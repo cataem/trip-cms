@@ -5,7 +5,7 @@
 			<h3 class="title">Editor layout</h3>
 			<div class="section">
 				<div @click="toggleEditorStyle(i)" class="editor-style-item" v-for="(item,i) in editorstyles" :key="i">
-					<div :class="[{active: active == i}, item]" class="editor-style-icon"></div>
+					<div :class="[{active: active == item}, item]" class="editor-style-icon"></div>
 					<p>{{item}}</p>
 				</div>
 			</div>
@@ -29,11 +29,11 @@
 export default {
 	props: [
 		'width',
-		'reference'
+		'reference',
+		'active'
 	],
 	data () {
 		return {
-			active: false,
 			wrap: false,
 			lines: true,
 			editorstyles: ['split', 'tabs']
@@ -47,7 +47,6 @@ export default {
 			this.lines = !this.lines
 		},
 		toggleEditorStyle (i) {
-			this.active = i
 			this.$store.dispatch('updateMode', this.editorstyles[i])
 		}
 	},
